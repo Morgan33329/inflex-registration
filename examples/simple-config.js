@@ -1,5 +1,6 @@
 'use strict';
-import path from "path";
+
+var path = require("path");
 
 process.env.DEVELOPER = true;
 
@@ -27,8 +28,8 @@ authConfig({
     mailTransport : {
         'service' : 'gmail',
         'auth' : {
-            'user' : 'dogolye@gmail.com',
-            'pass' : '19901128'
+            'user' : 'xxx',
+            'pass' : 'xxx'
         }
     }
 });

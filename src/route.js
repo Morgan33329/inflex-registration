@@ -10,13 +10,13 @@ import {
 var needActivate = null;
 var welcomeMail = null;
 var registrationSuccess = function (req, res) {
-    if (welcomeMail) {
+    if (welcomeMail && req.body.email) {
         req
             .userMail()
             .welcome(res, req.body.email, welcomeMail.subject, 'welcome');
     }
 
-    if (needActivate) {
+    if (needActivate && req.body.email) {
         req
             .userMail()
             .activate(res, req.body.email, needActivate.subject, 'activate');

@@ -110,6 +110,24 @@ var registerUser = function(req, res, next) {
         });
 }
 
+var newUser = function (req, res, next) {
+    let registerMiddle = authConfig('middleware.registration');
+
+    if (registerMiddle)
+        registerMiddle(req, res);
+
+    next();
+}
+
+var hasToken = function(req, res, next) {
+    let tokenMiddle = authConfig('middleware.token');
+
+    if (tokenMiddle)
+        tokenMiddle(req, res);
+
+    next();
+}
+
 export default function (options, middleware) {
     settings = _.merge(defaultSettings, options || {});
 
@@ -129,7 +147,10 @@ export default function (options, middleware) {
 
         checkExistsUsername,
 
-        registerUser
+        registerUser,
+
+        newUser,
+        hasToken
     );
 
     return ret;

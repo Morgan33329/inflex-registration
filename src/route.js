@@ -1,4 +1,4 @@
-import { needLogin } from 'inflex-authentication';
+import { needLogin, authConfig } from 'inflex-authentication';
 
 import { 
     registrationMiddleware, 
@@ -7,8 +7,7 @@ import {
 } from './registration';
 
 //Registration
-var needActivate = null;
-var welcomeMail = null;
+/*
 var registrationSuccess = function (req, res) {
     if (welcomeMail && req.body.email) {
         req
@@ -21,32 +20,19 @@ var registrationSuccess = function (req, res) {
             .userMail()
             .activate(res, req.body.email, needActivate.subject, 'activate');
     }
-
-    req
-        .token()
-        .generate(req.body.device)
-        .then((ret) => {
-            res.json({
-                'error' : false,
-                'response' : {
-                    'token' : ret.token
-                }
-            });
-        })
-        .catch(err => { 
-            console.log(err);
-
-            res.send('fail doJWTLogin');
-        });
 }
+*/
 
 export function registrationRoute (app, options) {
     options = options || {};
 
-    needActivate = options.activate || null;
-    welcomeMail = options.welcome || null;
+    let action = options.action || authConfig('actions.login');
 
-    app.post('/api/registration', registrationMiddleware(), options.action || registrationSuccess);
+    app.post(
+        '/api/registration', 
+        registrationMiddleware(), 
+        action
+    );
 }
 
 //Activate

@@ -99,6 +99,9 @@ var registerUser = function(req, res, next) {
 
                     return emailService;
                 }
+
+                req.newRegistration = true;
+
                 successLoginInMiddleware(userObject, req, next);
             })
         })

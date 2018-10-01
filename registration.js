@@ -1,6 +1,6 @@
 'use strict';
 
-const dir = process.env.DEVELOPER === true ? 'src' : 'build'; 
+const dir = ["true", "1", 1, true].indexOf(process.env.DEVELOPER) != -1 ? 'src' : 'lib'; 
 
 const registration = require('./' + dir + '/registration');
 

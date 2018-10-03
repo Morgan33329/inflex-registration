@@ -11,14 +11,19 @@ import {
 /**
  * Create default routes for login if we are lazy
  */
-export function registrationRoutes (app, options) {
+export function registrationRoutes (app, version, options) {
+    if (typeof version === 'object' && !options) {
+        options = version;
+        version = null;
+    }
+
     options = options || {};
 
-    saveProfileRoute(app, options.saveProfile || {});
+    saveProfileRoute(app, options.saveProfile || {}, version);
 
-    activateRoute(app, options.activate || {});
+    activateRoute(app, options.activate || {}, version);
 
-    registrationRoute(app, options.registration || {});
+    registrationRoute(app, options.registration || {}, version);
 }
 
 export function registrationMiddleware (options, middleware) {

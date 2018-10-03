@@ -1,4 +1,5 @@
-import { needLogin, authConfig } from 'inflex-authentication';
+import { needLogin } from 'inflex-authentication';
+import { routeAction } from 'inflex-authentication/helpers';
 
 import { 
     registrationMiddleware, 
@@ -23,15 +24,15 @@ var registrationSuccess = function (req, res) {
 }
 */
 
-export function registrationRoute (app, options) {
+export function registrationRoute (app, options, version) {
     options = options || {};
 
-    let action = options.action || authConfig('actions.login');
-
     app.post(
-        '/api/registration', 
-        registrationMiddleware(), 
-        action
+        (version ? '/' + version : '') + '/api/registration', 
+        registrationMiddleware({'version' : version}), 
+        (req, res, next) => {
+            routeAction('login', version, options.action)(req, res, next);
+        }
     );
 }
 
@@ -41,16 +42,21 @@ var activateSuccess = function (req, res) {
     res.render(activateView);
 }
 
-export function activateRoute (app, options) {
+export function activateRoute (app, options, version) {
     options = options || {};
 
     activateView = options.view || 'activated';
 
-    app.get('/activate', activateMiddleware({
-        'template' : {
-            'failed' : 'activated-fail',
-        }
-    }), options.action || activateSuccess);
+    app.get(
+        '/activate', 
+        activateMiddleware({
+            'version' : version,
+            'template' : {
+                'failed' : 'activated-fail',
+            }
+        }), 
+        options.action || activateSuccess
+    );
 }
 
 //Profile update
@@ -62,14 +68,14 @@ var profileUpdate = function (req, res) {
     });
 }
 
-export function saveProfileRoute (app, options) {
+export function saveProfileRoute (app, options, version) {
     options = options || {};
 
     activateView = options.view || 'activated';
 
     app.put(
-        '/api/me', 
-        profileMiddleware(null, needLogin()), 
+        (version ? '/' + version : '') + '/api/me', 
+        profileMiddleware({'version' : version}, needLogin()), 
         options.action || profileUpdate
     );
 }

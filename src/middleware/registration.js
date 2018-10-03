@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { authConfig } from 'inflex-authentication';
-import { createObject, successLoginInMiddleware } from 'inflex-authentication/helpers';
+import { createObject, successLoginInMiddleware, routeMiddleware } from 'inflex-authentication/helpers';
 import { check, validationResult } from 'express-validator/check';
 
 import { repository, getId } from './../database';
@@ -111,10 +111,12 @@ var registerUser = function(req, res, next) {
 }
 
 var newUser = function (req, res, next) {
-    let registerMiddle = authConfig('middleware.registration');
+    if (req.newRegistration) {
+        let middleware = routeMiddleware('registration', settings.version);
 
-    if (registerMiddle)
-        registerMiddle(req, res);
+        if (middleware)
+            return middleware(req, res, next);
+    }
 
     next();
 }

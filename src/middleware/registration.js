@@ -12,21 +12,25 @@ import EmailService from './../services/email'
 var defaultSettings = {
     'invalidRequest' : function(req, res, errors) {
         return res.status(422).json({ 
-            'error' : true,
-            'code' : '4220301',
-            'type' : '',
-            'title' : 'Invalid registration request',
-            'detail' : 'Invalid registration request: ' + JSON.stringify(errors)
+            'success' : false,
+            'error' : {
+                'code' : '4220301',
+                'type' : '',
+                'title' : 'Invalid registration request',
+                'detail' : 'Invalid registration request: ' + JSON.stringify(errors)
+            }
         });
     },
 
     'existsUsername' : function(req, res, types) {
         return res.status(422).json({ 
-            'error' : true,
-            'code' : '4220302',
-            'type' : '',
-            'title' : 'Someone registered with this data',
-            'detail' : 'This register data exists in database'
+            'success' : false,
+            'error' : {
+                'code' : '4220302',
+                'type' : '',
+                'title' : 'Someone registered with this data',
+                'detail' : 'This register data exists in database'
+            }
         });
     }
 };

@@ -6,7 +6,7 @@
     "email": "morgan92333@gmail.com",
     "url": "https://github.com/morgan92333"
   },
-  "version": "0.0.33",
+  "version": "0.0.35",
   "dependencies": {
     "bcrypt": "^2.0.1",
     "bluebird": "^3.5.1",
@@ -44,6 +44,8 @@
     "url": ""
   },
   "scripts": {
+    "only-dev": "npm install --only=dev",
+    "publish": "npm run build && npm publish",
     "watch-node": "nodemon --exec babel-node --presets env,stage-2 examples/simple-config.js",
     "build": "babel src --out-dir lib"
   }

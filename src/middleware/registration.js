@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { authConfig } from 'inflex-authentication';
-import { createObject, successLoginInMiddleware, routeMiddleware } from 'inflex-authentication/helpers';
+import { createObject, successLoginInMiddleware, routeMiddleware, defineSettings, settingsByUrl } from 'inflex-authentication/helpers';
 import { check, validationResult } from 'express-validator/check';
 
 import { repository, getId } from './../database';
@@ -9,7 +9,7 @@ import { repository, getId } from './../database';
 import UserService from './../services/user';
 import EmailService from './../services/email'
 
-var defaultSettings = {
+const defaultSettings = {
     'invalidRequest' : function(req, res, errors) {
         return res.status(422).json({ 
             'success' : false,
@@ -34,7 +34,7 @@ var defaultSettings = {
         });
     }
 };
-var settings = defaultSettings;
+var versionSettings = {};
 
 var validateUsername = function(inputValidators) {
     let validateInputs = authConfig('validateInputs');
@@ -56,7 +56,9 @@ var validatePassword = function(req, res, next) {
 }
 
 var isValidRequest = function(req, res, next) {
-    var errors = validationResult(req);
+    var errors = validationResult(req),
+    
+        settings = settingsByUrl(req, versionSettings);
 
     if (!errors.isEmpty()) {
         console.log('Invalid register form request', errors.array());
@@ -71,7 +73,9 @@ var checkExistsUsername = function(req, res, next) {
         .findByUsername(authConfig('loginWith'), req.body)
         .then(existsData => {
             if (existsData.length > 0) {
-                var existsDataTypes = [];
+                var existsDataTypes = [],
+    
+                    settings = settingsByUrl(req, versionSettings);
 
                 _.forEach(existsData, function(account) {
                     existsDataTypes.push(account.type);
@@ -116,7 +120,7 @@ var registerUser = function(req, res, next) {
 
 var newUser = function (req, res, next) {
     if (req.newRegistration) {
-        let middleware = routeMiddleware('registration', settings.version);
+        let middleware = routeMiddleware('registration', req);
 
         if (middleware)
             return middleware(req, res, next);
@@ -126,17 +130,12 @@ var newUser = function (req, res, next) {
 }
 
 export default function (options, middleware) {
-    settings = _.merge(defaultSettings, options || {});
+    let version = options && options.version || 'default';
 
-    if (!settings.invalidRequest) {
-        console.log('ERROR: You need define "invalidRequest" for register middleware');
-        process.exit(1);
-    } else if (!settings.existsUsername) {
-        console.log('ERROR: You need define "existsUsername" for register middleware');
-        process.exit(1);
-    }
+    middleware      = middleware || [];
+    versionSettings = defineSettings(version, options, versionSettings, defaultSettings);
 
-    var ret = validateUsername(middleware || []);
+    var ret = validateUsername(middleware);
 
     ret.push(
         validatePassword,

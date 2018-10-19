@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import { check, validationResult } from 'express-validator/check';
+import { defineSettings, settingsByUrl } from 'inflex-authentication/helpers';
 
 import { authConfig } from 'inflex-authentication';
 
 import { repository, getId } from '../database';
 import profile from '../services/profile';
 
-var defaultSettings = {
+const defaultSettings = {
     'invalidRequest' : (req, res, errors) => {
         return res.status(422).json({ 
             'success' : false,
@@ -31,7 +32,7 @@ var defaultSettings = {
         });
     }
 };
-var settings = defaultSettings;
+var versionSettings = {};
 
 var validateUsername = function(inputValidators) {
     let validateInputs = authConfig('validateInputs');
@@ -62,6 +63,8 @@ var isValidRequest = function(req, res, next) {
     var errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+        let settings = settingsByUrl(req, versionSettings);
+
         console.log('Invalid profile form request', errors.array());
 
         settings.invalidRequest(req, res, errors.array(), settings);
@@ -83,9 +86,11 @@ var checkExistsUsername = function(req, res, next) {
                         existsDataTypes.push(account.type);
                 });
 
-                if (existsDataTypes.length > 0)
+                if (existsDataTypes.length > 0) {
+                    let settings = settingsByUrl(req, versionSettings);
+                    
                     settings.existsUsername(req, res, existsDataTypes);
-                else
+                } else
                     next();
             } else
                 next();
@@ -107,9 +112,12 @@ var addProfileService = function(req, res, next) {
 } 
 
 export default function (options, middleware) {
-    settings = _.merge(defaultSettings, options || {});
+    let version = options && options.version || 'default';
 
-    var ret = validateUsername(middleware || []);
+    middleware      = middleware || [];
+    versionSettings = defineSettings(version, options, versionSettings, defaultSettings);
+
+    var ret = validateUsername(middleware);
 
     ret.push(
         validatePassword,

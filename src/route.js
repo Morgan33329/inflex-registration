@@ -29,9 +29,11 @@ export function registrationRoute (app, options, version) {
 
     app.post(
         (version ? '/' + version : '') + '/api/registration', 
-        registrationMiddleware({'version' : version}), 
+        registrationMiddleware({
+            'version' : version
+        }), 
         (req, res, next) => {
-            routeAction('login', version, options.action)(req, res, next);
+            routeAction('login', req, options.action)(req, res, next);
         }
     );
 }
@@ -75,7 +77,9 @@ export function saveProfileRoute (app, options, version) {
 
     app.put(
         (version ? '/' + version : '') + '/api/me', 
-        profileMiddleware({'version' : version}, needLogin()), 
+        profileMiddleware({
+            'version' : version
+        }, needLogin()), 
         options.action || profileUpdate
     );
 }

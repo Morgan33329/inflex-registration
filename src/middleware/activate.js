@@ -1,13 +1,14 @@
 import _ from 'lodash';
 
 import { repository } from './../database';
+import { defineSettings, settingsByUrl } from 'inflex-authentication/helpers';
 
-var defaultSettings = {
+const defaultSettings = {
     'template' : {
         'failed' : 'activated-fail'
     }
 };
-var settings = defaultSettings;
+var versionSettings = {};
 
 function getCode (req) {
     return req.query['hash'] || req.body['hash'];
@@ -20,6 +21,8 @@ var checkCode = function (req, res, next) {
         .findHash(code)
         .then(hash => {
             if (!hash) {
+                let settings = settingsByUrl(req, versionSettings);
+
                 res.render(settings.template.failed);
             } else {
                 repository('identity')
@@ -39,9 +42,12 @@ var checkCode = function (req, res, next) {
 }
 
 export default function (options, middleware) {
-    settings = _.merge(defaultSettings, options || {});
+    let version = options && options.version || 'default';
 
-    var ret = middleware || [];
+    middleware      = middleware || [];
+    versionSettings = defineSettings(version, options, versionSettings, defaultSettings);
+
+    var ret = middleware;
 
     ret.push(
         checkCode

@@ -1,7 +1,7 @@
-import passwordRepository from './mongo/password';
-import identityRepository from './mongo/identity';
-import accountRepository from './mongo/account';
-import hashRepository from './mongo/hash';
+import passwordRepository from './mongoose/password';
+import identityRepository from './mongoose/identity';
+import accountRepository from './mongoose/account';
+import hashRepository from './mongoose/hash';
 
 export default function (type) {
     switch (type) {
@@ -16,4 +16,4 @@ export default function (type) {
         default:
             console.log('Invalid repository type: ' + type);
     }
-}
+} 

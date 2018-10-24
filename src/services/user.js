@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Bluebird from 'bluebird';
 import bcrypt from 'bcrypt';
 
-import { repository } from './../database';
+import { repository, getId } from './../database';
 
 function createAccount (acc, type, identity) {
     return repository('account')
@@ -60,10 +60,10 @@ export default class {
         return createIdentity()
             .then(identity => {
                 var accountIds = [];
-
+console.log(identity, getId(identity));
                 _.forEach(loginWith, function(type, input) {
                     if (request[input]) {
-                        createAccount(request[input], type, identity.id);
+                        createAccount(request[input], type, getId(identity));
                     
                         accountIds.push();
                     }

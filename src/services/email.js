@@ -92,6 +92,7 @@ export default class {
 
         repository('hash')
             .insert({
+                'identity_id' : identityId,
                 'hash' : createHash(identityId),
                 'type' : 2
             })

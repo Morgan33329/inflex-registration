@@ -5,13 +5,13 @@ import { model } from './../../database';
 var identityRepository;
 
 class IdentityRepository {
-    insert (data) {
-        return new Promise((resolve) => {
-            model('identity')
-                .create(data, (err, result) => {
-                    resolve(result);
-                });
-        });
+    insert (data) { console.log(model('identity'));
+        return getConnection()
+            .createQueryBuilder()
+            .insert()
+            .into(model('identity'))
+            .values([ data ])
+            .execute();
     }
 
     update (id, data) {

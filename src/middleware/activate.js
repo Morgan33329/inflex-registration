@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-import { repository } from './../database';
-import { defineSettings, settingsByUrl } from 'inflex-authentication/helpers';
+import { repository, getId } from './../database';
+import { createObject, successLoginInMiddleware, defineSettings, settingsByUrl } from 'inflex-authentication/helpers';
 
 const defaultSettings = {
     'template' : {
@@ -11,7 +11,7 @@ const defaultSettings = {
 var versionSettings = {};
 
 function getCode (req) {
-    return req.query['hash'] || req.body['hash'];
+    return req.query['hash'] || req.body['hash'] || '0';
 }
 
 var checkCode = function (req, res, next) {
@@ -26,14 +26,23 @@ var checkCode = function (req, res, next) {
                 res.render(settings.template.failed);
             } else {
                 repository('identity')
-                    .update(hash.identity_id, {
-                        activated : true
-                    });
-
-                repository('hash')
-                    .deleteByHash(code)
-
-                next();
+                    .findOneById(hash.identity_id)
+                    .then(identity => {
+                        repository('identity')
+                            .update(getId(identity), {
+                                activated : true
+                            });
+        
+                        repository('hash')
+                            .deleteByHash(code)
+        
+                        createObject({
+                            identity : getId(identity)
+                        })
+                        .then(userObject => {
+                            successLoginInMiddleware(userObject, req, next);
+                        });
+                    })
             }
         })
         .catch(err => {

@@ -18,6 +18,9 @@ class AccountRepository {
     }
 
     update (id, data) {
+        if (!id)
+            return;
+            
         let self = this;
 
         return getManager()
@@ -32,6 +35,9 @@ class AccountRepository {
     }
 
     findOneById (id) {    
+        if (!id)
+            return;
+
         return getManager()
             .getRepository(model('account'))
             .createQueryBuilder('account')
@@ -40,6 +46,9 @@ class AccountRepository {
     }
 
     findAccountsByIdentity (id) {
+        if (!id)
+            return;
+
         return getManager()
             .getRepository(model('account'))
             .createQueryBuilder('account')

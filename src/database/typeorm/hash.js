@@ -18,15 +18,21 @@ class HashRepository {
     }
 
     findHash (hash) {
+        if (!hash)
+            return;
+
         return getManager()
             .getRepository(model('hash'))
             .createQueryBuilder('hash')
-            .where('hash.id = :hash', { id : hash })
-            .where('hash.type = :type', { type : 2 })
+            .where('hash.hash = :hash', { hash : hash })
+            .andWhere('hash.type = :type', { type : 2 })
             .getOne();
     }
 
     deleteByHash (hash) {
+        if (!hash)
+            return;
+            
         return getManager()
             .createQueryBuilder()
             .delete()

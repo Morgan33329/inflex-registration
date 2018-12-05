@@ -4,4 +4,6 @@ const dir = ["true", "1", 1, true].indexOf(process.env.DEVELOPER) != -1 ? 'src' 
 
 const registration = require('./' + dir + '/registration');
 
-exports.registrationRoutes = registration.registrationRoutes;
+exports.registrationApiRoutes = registration.registrationApiRoutes;
+
+exports.registrationWebRoutes = registration.registrationWebRoutes;

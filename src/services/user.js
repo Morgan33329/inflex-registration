@@ -60,7 +60,7 @@ export default class {
         return createIdentity()
             .then(identity => {
                 var accountIds = [];
-console.log(identity, getId(identity));
+
                 _.forEach(loginWith, function(type, input) {
                     if (request[input]) {
                         createAccount(request[input], type, getId(identity));

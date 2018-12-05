@@ -17,6 +17,9 @@ class PasswordRepository {
     }
 
     update (id, data) {
+        if (!id)
+            return;
+
         let self = this;
 
         return getManager()
@@ -31,6 +34,9 @@ class PasswordRepository {
     }
 
     findOneById (id) {    
+        if (!id)
+            return;
+
         return getManager()
             .getRepository(model('password'))
             .createQueryBuilder('password')
@@ -39,6 +45,9 @@ class PasswordRepository {
     }
 
     findPassword (identity) {
+        if (!identity)
+            return;
+
         return getManager()
             .getRepository(model('password'))
             .createQueryBuilder('password')

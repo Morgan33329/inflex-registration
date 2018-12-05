@@ -3,9 +3,8 @@ import { routeAction } from 'inflex-authentication/helpers';
 
 import { 
     registrationMiddleware, 
-    activateMiddleware, 
     profileMiddleware 
-} from './registration';
+} from './../registration';
 
 //Registration
 /*
@@ -38,29 +37,6 @@ export function registrationRoute (app, options, version) {
     );
 }
 
-//Activate
-var activateView;
-var activateSuccess = function (req, res) {
-    res.render(activateView);
-}
-
-export function activateRoute (app, options, version) {
-    options = options || {};
-
-    activateView = options.view || 'activated';
-
-    app.get(
-        '/activate', 
-        activateMiddleware({
-            'version' : version,
-            'template' : {
-                'failed' : 'activated-fail',
-            }
-        }), 
-        options.action || activateSuccess
-    );
-}
-
 //Profile update
 var profileUpdate = function (req, res) {
     req.update();
@@ -72,8 +48,6 @@ var profileUpdate = function (req, res) {
 
 export function saveProfileRoute (app, options, version) {
     options = options || {};
-
-    activateView = options.view || 'activated';
 
     app.put(
         (version ? '/' + version : '') + '/api/me', 

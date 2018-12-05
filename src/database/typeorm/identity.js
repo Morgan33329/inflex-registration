@@ -19,6 +19,9 @@ class IdentityRepository {
     }
 
     update (id, data) {
+        if (!id)
+            return;
+
         let self = this;
 
         return getManager()
@@ -33,6 +36,9 @@ class IdentityRepository {
     }
 
     findOneById (id) {
+        if (!id)
+            return;
+            
         return getManager()
             .getRepository(model('identity'))
             .createQueryBuilder('identity')

@@ -2,16 +2,14 @@ import registration from "./middleware/registration";
 import activate from "./middleware/activate";
 import profile from "./middleware/profile-update";
 
-import {
-     registrationRoute, 
-     activateRoute, 
-     saveProfileRoute 
-} from './route';
+import { registrationRoute, saveProfileRoute } from './routes/api';
+
+import { activateRoute } from './routes/web';
 
 /**
  * Create default routes for login if we are lazy
  */
-export function registrationRoutes (app, version, options) {
+export function registrationApiRoutes (app, version, options) {
     if (typeof version === 'object' && !options) {
         options = version;
         version = null;
@@ -21,10 +19,17 @@ export function registrationRoutes (app, version, options) {
 
     saveProfileRoute(app, options.saveProfile || {}, version);
 
-    activateRoute(app, options.activate || {}, version);
-
     registrationRoute(app, options.registration || {}, version);
 }
+
+export function registrationWebRoutes (app, options) {
+    options = options || {};
+
+    activateRoute(app, options.activate || {});
+
+}
+
+// Middlewares
 
 export function registrationMiddleware (options, middleware) {
     options = options || {};

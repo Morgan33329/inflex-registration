@@ -27,7 +27,7 @@ export function registrationRoute (app, options, version) {
     options = options || {};
 
     app.post(
-        (version ? '/' + version : '') + '/api/registration', 
+        (version ? '/' + version : '') + '/api/register', 
         registrationMiddleware({
             'version' : version
         }), 
